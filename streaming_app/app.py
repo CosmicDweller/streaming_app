@@ -1,12 +1,46 @@
-from flask import Flask, Response, render_template, request, jsonify
+from flask import Flask, Response, render_template, request, jsonify, redirect, session, url_for
 import cv2
 from pydub import AudioSegment
 from pydub.playback import play
 import io
+from functools import wraps
+import os
+
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'hjshjhdjah kjshkjdhjs'
+
+PASSWORD = os.getenv('PASSWORD')
+# PASSWORD = '1234'
 
 
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    print(PASSWORD)
+    if request.method == 'POST':
+        password = request.form.get('password')
+        if password == PASSWORD:
+            session['authenticated'] = True
+            return redirect(url_for('index'))
+
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session['authenticated'] = False
+    return redirect(url_for('login'))
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('authenticated'):
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
 
 @app.route('/')
 def index():
