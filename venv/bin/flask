@@ -1,4 +1,4 @@
-#!/Users/kvberry/Code/Algo/streaming_app/venv/bin/python
+#!/Users/kvberry/Documents/GitHub/streaming_app/venv/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys
